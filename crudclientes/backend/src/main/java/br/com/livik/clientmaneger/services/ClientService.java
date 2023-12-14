@@ -42,7 +42,7 @@ public class ClientService {
 	public ClientDTO update(Long id, ClientDTO dto) {
 		try {
 			Client client = repository.getReferenceById(id);
-			client = new Client(dto);
+			copyDataFromDtoToEntity(client, dto);
 			return new ClientDTO(repository.save(client));
 		} catch (jakarta.persistence.EntityNotFoundException e) {
 			throw new EntityNotFoundException("ID "+id+" não encontrado");
@@ -50,9 +50,19 @@ public class ClientService {
 	}
 	
 	public void delete(Long id){
-		try { repository.deleteById(id); } 
-		catch (EmptyResultDataAccessException e) {
+		try { 
+			repository.deleteById(id); 
+		} catch (EmptyResultDataAccessException e) {
 			throw new EntityNotFoundException("ID "+id+" não encontrado");
 		}
 	}
+	
+	private void copyDataFromDtoToEntity(Client entity, ClientDTO dto) {
+		if(dto.getName() != null) entity.setName(dto.getName());
+		if(dto.getCpf() != null) entity.setCpf(dto.getCpf());
+		if(dto.getIncome() != null) entity.setIncome(dto.getIncome());
+		if(dto.getBirthDate() != null) entity.setBirthDate(dto.getBirthDate());
+		if(dto.getChildren() != null) entity.setChildren(dto.getChildren());
+	}
 }
+
